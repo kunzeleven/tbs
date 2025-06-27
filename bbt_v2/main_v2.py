@@ -434,9 +434,20 @@ def admin_page():
             if result.data:
                 df = pd.DataFrame(result.data)
                 
+                # PERBAIKAN: Konversi tipe data yang benar
+                try:
+                    df['tanggal_booking'] = pd.to_datetime(df['tanggal_booking'], errors='coerce').dt.date
+                    df['waktu_mulai'] = pd.to_datetime(df['waktu_mulai'], format='%H:%M:%S', errors='coerce').dt.time
+                    df['waktu_selesai'] = pd.to_datetime(df['waktu_selesai'], format='%H:%M:%S', errors='coerce').dt.time
+                    if 'created_at' in df.columns:
+                        df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
+                except Exception as e:
+                    st.error(f"Error konversi data: {str(e)}")
+                    return
+                
                 st.subheader("✏️ Edit & Hapus Booking")
                 
-                # Data editor untuk admin
+                # Data editor dengan konfigurasi yang tepat
                 edited_df = st.data_editor(
                     df,
                     column_config={
@@ -449,7 +460,11 @@ def admin_page():
                             options=["Breakout Traction", "Cozy 19.2"],
                             required=True
                         ),
-                        "tanggal_booking": st.column_config.DateColumn("Tanggal Booking", required=True),
+                        "tanggal_booking": st.column_config.DateColumn(
+                            "Tanggal Booking", 
+                            required=True,
+                            format="DD/MM/YYYY"
+                        ),
                         "waktu_mulai": st.column_config.TimeColumn("Waktu Mulai", required=True),
                         "waktu_selesai": st.column_config.TimeColumn("Waktu Selesai", required=True),
                         "keterangan": st.column_config.TextColumn("Keterangan"),
@@ -463,15 +478,25 @@ def admin_page():
                 # Tombol untuk menyimpan perubahan
                 if st.button("💾 Simpan Perubahan", type="primary"):
                     try:
-                        # Handle edited rows
                         if "booking_editor" in st.session_state:
                             editor_state = st.session_state["booking_editor"]
                             
-                            # Update edited rows
+                            # Handle edited rows
                             if "edited_rows" in editor_state:
                                 for idx, changes in editor_state["edited_rows"].items():
                                     row_id = df.iloc[idx]["id"]
-                                    supabase.table('bookings').update(changes).eq('id', row_id).execute()
+                                    
+                                    # Konversi perubahan ke format database
+                                    db_changes = {}
+                                    for key, value in changes.items():
+                                        if key == 'tanggal_booking' and hasattr(value, 'strftime'):
+                                            db_changes[key] = value.strftime('%Y-%m-%d')
+                                        elif key in ['waktu_mulai', 'waktu_selesai'] and hasattr(value, 'strftime'):
+                                            db_changes[key] = value.strftime('%H:%M:%S')
+                                        else:
+                                            db_changes[key] = value
+                                    
+                                    supabase.table('bookings').update(db_changes).eq('id', row_id).execute()
                             
                             # Handle deleted rows
                             if "deleted_rows" in editor_state:
@@ -483,6 +508,15 @@ def admin_page():
                             if "added_rows" in editor_state:
                                 for row in editor_state["added_rows"]:
                                     row_data = dict(row)
+                                    
+                                    # Konversi data baru ke format database
+                                    if 'tanggal_booking' in row_data and hasattr(row_data['tanggal_booking'], 'strftime'):
+                                        row_data['tanggal_booking'] = row_data['tanggal_booking'].strftime('%Y-%m-%d')
+                                    if 'waktu_mulai' in row_data and hasattr(row_data['waktu_mulai'], 'strftime'):
+                                        row_data['waktu_mulai'] = row_data['waktu_mulai'].strftime('%H:%M:%S')
+                                    if 'waktu_selesai' in row_data and hasattr(row_data['waktu_selesai'], 'strftime'):
+                                        row_data['waktu_selesai'] = row_data['waktu_selesai'].strftime('%H:%M:%S')
+                                    
                                     row_data["created_at"] = datetime.now().isoformat()
                                     supabase.table('bookings').insert(row_data).execute()
                         
