@@ -28,7 +28,7 @@ def load_css():
     /* Header styling - Minimalist Apple Style */
     .main-header {
         background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 50%, #d8d8d8 100%);
-        padding: 1rem 2rem;
+        #padding: 1rem 2rem;
         border-radius: 8px;
         margin-bottom: 1.5rem;
         color: #333333;
