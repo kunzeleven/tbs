@@ -112,11 +112,40 @@ def load_css():
 @st.cache_resource
 def init_supabase():
     try:
+        # Validasi apakah secrets tersedia
+        if "supabase" not in st.secrets:
+            st.error("⚠️ Konfigurasi Supabase tidak ditemukan dalam secrets")
+            return None
+            
         url = st.secrets["supabase"]["url"]
         key = st.secrets["supabase"]["key"]
-        return create_client(url, key)
+        
+        # Validasi format URL dan key
+        if not url or not url.startswith("https://"):
+            st.error("⚠️ URL Supabase tidak valid")
+            return None
+            
+        if not key or len(key) < 100:  # Anon key biasanya panjang
+            st.error("⚠️ API Key Supabase tidak valid")
+            return None
+            
+        # Buat client Supabase
+        supabase = create_client(url, key)
+        
+        # Test koneksi
+        try:
+            # Coba query sederhana untuk test koneksi
+            test_result = supabase.table('bookings').select('count').execute()
+            return supabase
+        except Exception as test_error:
+            st.error(f"⚠️ Gagal terhubung ke database: {str(test_error)}")
+            return None
+            
+    except KeyError as e:
+        st.error(f"⚠️ Konfigurasi tidak lengkap: {str(e)}")
+        return None
     except Exception as e:
-        st.error("Error connecting to database. Please check configuration.")
+        st.error(f"⚠️ Error saat inisialisasi Supabase: {str(e)}")
         return None
 
 # Fungsi validasi
@@ -278,6 +307,32 @@ def booking_form_page():
                             
                         except Exception as e:
                             st.error(f"Error menyimpan data: {str(e)}")
+
+def debug_supabase_connection():
+    """Fungsi untuk debugging koneksi Supabase"""
+    if st.button("🔍 Test Koneksi Supabase"):
+        try:
+            # Cek apakah secrets tersedia
+            if "supabase" not in st.secrets:
+                st.error("❌ Secrets supabase tidak ditemukan")
+                return
+                
+            url = st.secrets["supabase"]["url"]
+            key = st.secrets["supabase"]["key"]
+            
+            # Tampilkan info tanpa mengekspos key lengkap
+            st.info(f"📍 URL: {url}")
+            st.info(f"🔑 Key: {key[:20]}...{key[-10:]}")
+            
+            # Test koneksi
+            supabase = create_client(url, key)
+            result = supabase.table('bookings').select('count').execute()
+            
+            st.success("✅ Koneksi berhasil!")
+            
+        except Exception as e:
+            st.error(f"❌ Error: {str(e)}")
+
 
 # Halaman List Booking
 def booking_list_page():
