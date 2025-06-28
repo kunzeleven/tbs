@@ -328,21 +328,18 @@ def booking_list_page():
 
 def main():
     load_css()
+    
+    # Initialize session state
     if 'page' not in st.session_state:
-        st.session_state['page'] = 'form'
-    # Navigasi berdasarkan URL parameter
-    page_param = st.experimental_get_query_params().get('page', [''])[0]
-    if page_param in ['form', 'list', 'admin']:
-        st.session_state['page'] = page_param
-    if st.session_state['page'] == 'form':
+        st.session_state.page = "form"
+    
+    # Route to pages
+    if st.session_state.page == "form":
         booking_form_page()
-    elif st.session_state['page'] == 'list':
+    elif st.session_state.page == "list":
         booking_list_page()
-    elif st.session_state['page'] == 'admin':
-        if check_admin_auth():
-            admin_page()
-        else:
-            admin_login()
+    elif st.session_state.page == "admin":
+        admin_page()
 
 if __name__ == "__main__":
     main()
