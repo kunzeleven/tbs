@@ -366,8 +366,8 @@ def booking_list_page():
     st.markdown('<div class="main-header"><h1>📋 Daftar Booking Meeting Room</h1></div>', unsafe_allow_html=True)
     
     # Navigation buttons
-    col1, col2 = st.columns(2)
-    with col1:
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
         if st.button("🔙 Kembali ke Form", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
