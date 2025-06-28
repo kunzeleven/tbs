@@ -371,10 +371,10 @@ def booking_list_page():
         if st.button("🔙 Kembali ke Form", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
-    with col2:
-        if st.button("⚙️ Admin Panel", use_container_width=True):
-            st.session_state.page = "admin"
-            st.rerun()
+    #with col2:
+    #    if st.button("⚙️ Admin Panel", use_container_width=True):
+    #        st.session_state.page = "admin"
+    #        st.rerun()
     
     st.markdown("---")
     
@@ -414,6 +414,16 @@ def booking_list_page():
                 
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
+
+    # ----- TOMBOL ADMIN DI BAWAH FORM -----
+    bottom_left, bottom_center, bottom_right = st.columns(3)
+    with bottom_center:
+        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+            st.session_state.page = "admin"
+            st.rerun()
+    # tambahkan kelas CSS agar ter-target
+    st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
+
 
 # Halaman Admin
 def admin_page():
