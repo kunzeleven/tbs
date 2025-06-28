@@ -331,7 +331,7 @@ def main():
     if 'page' not in st.session_state:
         st.session_state['page'] = 'form'
     # Navigasi berdasarkan URL parameter
-    page_param = st.query_params().get('page', [''])[0]
+    page_param = st.experimental_get_query_params().get('page', [''])[0]
     if page_param in ['form', 'list', 'admin']:
         st.session_state['page'] = page_param
     if st.session_state['page'] == 'form':
