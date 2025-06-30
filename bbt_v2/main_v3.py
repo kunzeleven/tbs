@@ -19,6 +19,9 @@ st.set_page_config(
 def load_css():
     st.markdown("""
     <style>
+    :root {
+      color-scheme: light;
+    }
     /* Reset dan base styling */
     .stApp {
         background-color: #ffffff;
