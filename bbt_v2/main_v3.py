@@ -424,8 +424,8 @@ def booking_list_page():
     st.markdown("")
     
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
-    bottom_left, bottom_center, bottom_right = st.columns(3)
-    with bottom_center:
+    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
+    with col5:
         if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
             st.session_state.page = "admin"
             st.rerun()
