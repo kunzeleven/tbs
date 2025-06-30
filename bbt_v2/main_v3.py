@@ -571,8 +571,8 @@ def load_css_and_js():
                       background: none !important;
                       border: none !important;
                       padding: 0 !important;
-                      font-size: 0.9rem !important;
-                      color: #007AFF !important;
+                      font-size: 0.5rem !important;
+                      color: #FFFFFF !important;
                       box-shadow: none !important;
                   `;
               }
@@ -584,8 +584,8 @@ def load_css_and_js():
 
 # Main app
 def main():
-    load_css()
     load_css_and_js()
+    load_css()
     
     # Initialize session state
     if 'page' not in st.session_state:
