@@ -91,17 +91,22 @@ def load_css():
         transition: all 0.2s ease !important;
     }
     
-    .stButton > button[kind="secondary"], 
-    .stButton > button:contains("MieMeans") {
+    div[data-testid="stButton"] > button[data-testid="stBaseButton-secondary"]:has-text("MieMeans"),
+    div[data-testid="stButton"] > button[key="admin_panel_bottom"],
+    .stButton > button[data-testid="stBaseButton-secondary"]:has-text("MieMeans"),
+    .st-key-admin_panel_bottom .stButton > button,
+    div.stButton > button.st-key-admin_panel_bottom {
         background: none !important;
         border: none !important;
         padding: 0 !important;
         min-height: auto !important;
         height: auto !important;
-        font-size: 0.6rem !important;
-        font-weight: 200 !important;
+        font-size: 0.9rem !important;
+        font-weight: 400 !important;
+        color: #ffffff !important;
         box-shadow: none !important;
         cursor: pointer !important;
+        transition: color 0.15s ease !important;
     }
     
     /* Form styling */
