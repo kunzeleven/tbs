@@ -18,10 +18,13 @@ st.set_page_config(
 # CSS untuk styling Apple-like
 def load_css():
     st.markdown("""
+    <meta name="color-scheme" content="only light">
+    <meta name="supported-color-schemes" content="light">
     <style>
     /* Reset dan base styling */
     .stApp {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
+        color: #000000 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
