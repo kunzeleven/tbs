@@ -420,9 +420,10 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.markdown('adminpanel'):
+        if st.markdown("adminpanel"):
             st.session_state.page = "admin"
             st.rerun()
+        #if st.button(label="adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
                      
 # Halaman Admin
 def admin_page():
