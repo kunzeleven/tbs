@@ -340,6 +340,7 @@ def booking_form_page():
                             st.error(f"Error menyimpan data: {str(e)}")
 
     st.markdown("")
+    st.markdown("")
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
         st.markdown(''':gray[--for adding new meeting room please contact rania traction--]''')
