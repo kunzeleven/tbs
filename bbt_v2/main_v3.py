@@ -51,6 +51,19 @@ def load_css():
             st.session_state.page = "list"
             st.rerun()
 
+    /* Targeting button berdasarkan posisi dalam column */
+    .stButton:has(button:contains("MieMeans")) > button {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        min-height: auto !important;
+        height: auto !important;
+        font-size: 0.6rem !important;
+        font-weight: 200 !important;
+        /* color: #007AFF !important; */
+        box-shadow: none !important;
+        cursor: pointer !important;
+    }
 
     /* Override Streamlit button styling for navigation */
     .nav-buttons .stButton > button {
@@ -118,21 +131,6 @@ def load_css():
         border-color: #007AFF;
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
     }
-
-    /* Targeting button berdasarkan posisi dalam column */
-    .stButton:has(button:contains("MieMeans")) > button {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        min-height: auto !important;
-        height: auto !important;
-        font-size: 0.6rem !important;
-        font-weight: 200 !important;
-        /* color: #007AFF !important; */
-        box-shadow: none !important;
-        cursor: pointer !important;
-    }
-
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
