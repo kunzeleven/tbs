@@ -419,6 +419,10 @@ def booking_list_page():
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
 
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+    
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
