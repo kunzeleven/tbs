@@ -119,8 +119,8 @@ def load_css():
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
     }
 
-    /* 1. Target berdasarkan class key yang benar */
-    .st-key-admin_panel_bottom > button {
+    /* Selector sangat spesifik untuk tombol dengan key "admin_panel_bottom" */
+    div.stButton.stKey-admin_panel_bottom > button {
         background: none !important;
         border: none !important;
         padding: 0 !important;
@@ -129,20 +129,22 @@ def load_css():
         font-weight: 200 !important;
         color: #FFFFFF !important;
         cursor: pointer !important;
-        transition: color 0.15s ease !important;
     }
-    /* Hover effect */
-    .st-key-admin_panel_bottom > button:hover {
+
+    /* Hover */
+    div.stButton.stKey-admin_panel_bottom > button:hover {
         text-decoration: underline !important;
         color: #FFFFFF !important;
     }
-    /* Active/focus state */
-    .st-key-admin_panel_bottom > button:active,
-    .st-key-admin_panel_bottom > button:focus {
+
+    /* Active/focus */
+    div.stButton.stKey-admin_panel_bottom > button:active,
+    div.stButton.stKey-admin_panel_bottom > button:focus {
         transform: none !important;
         box-shadow: none !important;
         outline: none !important;
     }
+
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
