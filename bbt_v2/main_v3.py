@@ -24,8 +24,8 @@ def load_css():
     }
     /* Reset dan base styling */
     .stApp {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #ffffff !important;
+        color: #000000 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
