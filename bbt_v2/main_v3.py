@@ -339,6 +339,10 @@ def booking_form_page():
                         except Exception as e:
                             st.error(f"Error menyimpan data: {str(e)}")
 
+    st.markdown("")
+    st.markdown("--for adding new meeting room please contact rania traction--")
+
+
 def debug_supabase_connection():
     """Fungsi untuk debugging koneksi Supabase"""
     if st.button("🔍 Test Koneksi Supabase"):
