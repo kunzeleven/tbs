@@ -420,7 +420,7 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.markdown('adminpanel':
+        if st.markdown('adminpanel'):
             st.session_state.page = "admin"
             st.rerun()
                      
