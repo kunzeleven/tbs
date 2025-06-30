@@ -81,7 +81,7 @@ def load_css():
 
     /* ========== OVERRIDE NAV BUTTONS SEBAGAI TEKS ========== */
     /* Target berdasarkan text dan key widget */
-    div.stButton:has(button:contains("adminpanel")) > button,
+    .stButton:has(button:contains("adminpanel")) > button,
     .stButton > button.stkey-admin_panel_bottom {
         background: none !important;
         border: none !important;
@@ -94,14 +94,14 @@ def load_css():
     }
 
     /* Hover: beri underline dan ubah warna */
-    div.stButton:has(button:contains("adminpanel")) > button:hover,
+    .stButton:has(button:contains("adminpanel")) > button:hover,
     .stButton > button.stkey-admin_panel_bottom:hover {
         text-decoration: underline !important;
         color: #FFFFFF !important;
     }
 
     /* Active: hilangkan efek translate */
-    div.stButton:has(button:contains("adminpanel")) > button:active,
+    .stButton:has(button:contains("adminpanel")) > button:active,
     .stButton > button.stkey-admin_panel_bottom:active {
         transform: none !important;
         box-shadow: none !important;
