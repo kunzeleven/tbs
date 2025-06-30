@@ -238,6 +238,17 @@ def check_admin_auth() -> bool:
 
 def admin_login():
     st.subheader("🔐 Admin Login")
+
+    # Navigation buttons
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("🔙 Kembali ke Daftar Booking", use_container_width=True):
+            st.session_state.page = "list"
+            st.rerun()
+    with col2:
+        if st.button("🔙 Kembali ke Form", use_container_width=True):
+            st.session_state.page = "form"
+            st.rerun()
     
     with st.form("admin_login_form"):
         username = st.text_input("Username")
