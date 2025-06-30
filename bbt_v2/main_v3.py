@@ -118,6 +118,31 @@ def load_css():
         border-color: #007AFF;
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
     }
+
+    /* 1. Target berdasarkan class key yang benar */
+    .st-key-admin_panel_bottom > button {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        font-size: 0.5rem !important;
+        font-weight: 200 !important;
+        color: #FFFFFF !important;
+        cursor: pointer !important;
+        transition: color 0.15s ease !important;
+    }
+    /* Hover effect */
+    .st-key-admin_panel_bottom > button:hover {
+        text-decoration: underline !important;
+        color: #FFFFFF !important;
+    }
+    /* Active/focus state */
+    .st-key-admin_panel_bottom > button:active,
+    .st-key-admin_panel_bottom > button:focus {
+        transform: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
@@ -423,7 +448,6 @@ def booking_list_page():
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
         if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
-            st.write("adminpanel")
             st.session_state.page = "admin"
             st.rerun()
                      
