@@ -425,7 +425,7 @@ def booking_list_page():
     
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns(10)
-    with col5:
+    with col10:
         if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
             st.session_state.page = "admin"
             st.rerun()
