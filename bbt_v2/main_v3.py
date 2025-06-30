@@ -90,26 +90,6 @@ def load_css():
         font-weight: 500 !important;
         transition: all 0.2s ease !important;
     }
-
-    st.markdown("""
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.includes('MieMeans')) {
-                button.style.cssText = `
-                    background: none !important;
-                    border: none !important;
-                    padding: 0 !important;
-                    font-size: 0.6 !important;
-                    color: #FFFFFF !important;
-                    box-shadow: none !important;
-                `;
-            }
-        });
-    });
-    </script>
-    """, unsafe_allow_html=True)
     
     /* Form styling */
     .stForm {
@@ -579,9 +559,35 @@ def admin_page():
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
 
+def load_css_and_js():
+    st.markdown("""
+    <style>
+      /* CSS Anda di sini */
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const buttons = document.querySelectorAll('button');
+          buttons.forEach(button => {
+              if (button.textContent.includes('MieMeans')) {
+                  button.style.cssText = `
+                      background: none !important;
+                      border: none !important;
+                      padding: 0 !important;
+                      font-size: 0.9rem !important;
+                      color: #007AFF !important;
+                      box-shadow: none !important;
+                  `;
+              }
+          });
+      });
+    </script>
+    """, unsafe_allow_html=True)
+
+
 # Main app
 def main():
     load_css()
+    load_css_and_js()
     
     # Initialize session state
     if 'page' not in st.session_state:
