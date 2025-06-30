@@ -51,12 +51,7 @@ def load_css():
             st.session_state.page = "list"
             st.rerun()
 
-
-    div[data-testid="stButton"] > button[data-testid="baseButton-secondary"]:has-text("MieMeans"),
-    div[data-testid="stButton"] > button[key="admin_panel_bottom"],
-    .stButton > button[data-testid="baseButton-secondary"]:has-text("MieMeans"),
-    .st-key-admin_panel_bottom .stButton > button,
-    div.stButton > button.st-key-admin_panel_bottom {
+    .stButton > button:contains("MieMeans") {
         background: none !important;
         border: none !important;
         padding: 0 !important;
