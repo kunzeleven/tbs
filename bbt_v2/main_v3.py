@@ -118,6 +118,37 @@ def load_css():
         border-color: #007AFF;
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
     }
+
+    .stButton > button[data-testid="baseButton-secondary"]:has-text("⚙️ Admin Panel"),
+    .stButton > button.stkey-admin_panel_bottom {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        min-height: auto !important;
+        height: auto !important;
+        font-size: 0.9rem !important;
+        font-weight: 400 !important;
+        color: #007AFF !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
+        transition: color 0.15s ease !important;
+    }
+
+    .stButton > button[data-testid="baseButton-secondary"]:has-text("⚙️ Admin Panel"):hover,
+    .stButton > button.stkey-admin_panel_bottom:hover {
+        text-decoration: underline !important;
+        color: #0056CC !important;
+        transform: none !important;
+        background: none !important;
+    }
+
+    .stButton > button[data-testid="baseButton-secondary"]:has-text("⚙️ Admin Panel"):active,
+    .stButton > button.stkey-admin_panel_bottom:active {
+        transform: none !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
@@ -329,11 +360,11 @@ def booking_form_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.subheader("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
-    st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
+    #st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
 
 def debug_supabase_connection():
     """Fungsi untuk debugging koneksi Supabase"""
@@ -418,11 +449,11 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.subheader("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
-    st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
+    #st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
 
 
 # Halaman Admin
