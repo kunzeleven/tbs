@@ -115,14 +115,14 @@ def load_css():
         padding: 0.75rem;
         font-size: 16px;
         transition: border-color 0.2s ease;
-        background-color: #ffffff !important;
-        color: #000000 !important;
+        color-scheme: light
     }
     
     .stTextInput > div > div > input:focus,
     .stSelectbox > div > div > select:focus {
         border-color: #007AFF;
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        color-scheme: light
     }
     
     /* Hide Streamlit elements */
