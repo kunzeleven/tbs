@@ -115,6 +115,8 @@ def load_css():
         padding: 0.75rem;
         font-size: 16px;
         transition: border-color 0.2s ease;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
     
     .stTextInput > div > div > input:focus,
