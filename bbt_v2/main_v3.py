@@ -51,8 +51,12 @@ def load_css():
             st.session_state.page = "list"
             st.rerun()
 
-    /* Targeting button berdasarkan posisi dalam column */
-    .stButton:has(button:contains("MieMeans")) > button {
+
+    div[data-testid="stButton"] > button[data-testid="baseButton-secondary"]:has-text("MieMeans"),
+    div[data-testid="stButton"] > button[key="admin_panel_bottom"],
+    .stButton > button[data-testid="baseButton-secondary"]:has-text("MieMeans"),
+    .st-key-admin_panel_bottom .stButton > button,
+    div.stButton > button.st-key-admin_panel_bottom {
         background: none !important;
         border: none !important;
         padding: 0 !important;
@@ -60,7 +64,6 @@ def load_css():
         height: auto !important;
         font-size: 0.6rem !important;
         font-weight: 200 !important;
-        /* color: #007AFF !important; */
         box-shadow: none !important;
         cursor: pointer !important;
     }
