@@ -123,6 +123,24 @@ def load_css():
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
     </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const buttons = document.querySelectorAll('button');
+          buttons.forEach(button => {
+              if (button.textContent.includes('adminpanel')) {
+                  button.style.cssText = `
+                      background: none !important;
+                      border: none !important;
+                      padding: 0 !important;
+                      font-size: 0.5rem !important;
+                      color: #FFFFFF !important;
+                      box-shadow: none !important;
+                  `;
+              }
+          });
+      });
+    </script>
     """, unsafe_allow_html=True)
 
 
@@ -420,10 +438,9 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.markdown("adminpanel"):
+        if st.button(label="adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
             st.session_state.page = "admin"
             st.rerun()
-        #if st.button(label="adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
                      
 # Halaman Admin
 def admin_page():
@@ -558,34 +575,9 @@ def admin_page():
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
 
-def load_css_and_js():
-    st.markdown("""
-    <style>
-      /* CSS Anda di sini */
-    </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          const buttons = document.querySelectorAll('button');
-          buttons.forEach(button => {
-              if (button.textContent.includes('adminpanel')) {
-                  button.style.cssText = `
-                      background: none !important;
-                      border: none !important;
-                      padding: 0 !important;
-                      font-size: 0.5rem !important;
-                      color: #FFFFFF !important;
-                      box-shadow: none !important;
-                  `;
-              }
-          });
-      });
-    </script>
-    """, unsafe_allow_html=True)
-
 
 # Main app
 def main():
-    load_css_and_js()
     load_css()
     
     # Initialize session state
