@@ -101,7 +101,7 @@ def load_css():
                     background: none !important;
                     border: none !important;
                     padding: 0 !important;
-                    font-size: 0.6rem !important;
+                    font-size: 0.6 !important;
                     color: #FFFFFF !important;
                     box-shadow: none !important;
                 `;
