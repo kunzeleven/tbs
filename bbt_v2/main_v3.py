@@ -79,35 +79,7 @@ def load_css():
         box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
     }
 
-    /* ========== OVERRIDE NAV BUTTONS SEBAGAI TEKS ========== */
-    /* Target berdasarkan text dan key widget */
-    .stButton:has(button:contains("adminpanel")) > button,
-    .stButton > button.stkey-admin_panel_bottom {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        font-size: 0.5rem !important;
-        font-weight: 400 !important;
-        color: #FFFFFF !important;    /* Warna teks link Apple */
-        cursor: pointer !important;
-    }
 
-    /* Hover: beri underline dan ubah warna */
-    .stButton:has(button:contains("adminpanel")) > button:hover,
-    .stButton > button.stkey-admin_panel_bottom:hover {
-        text-decoration: underline !important;
-        color: #FFFFFF !important;
-    }
-
-    /* Active: hilangkan efek translate */
-    .stButton:has(button:contains("adminpanel")) > button:active,
-    .stButton > button.stkey-admin_panel_bottom:active {
-        transform: none !important;
-        box-shadow: none !important;
-    }
-
-    
     /* Primary action buttons (Submit) */
     .stButton > button[kind="primary"], 
     .stButton > button:contains("Submit") {
@@ -153,23 +125,6 @@ def load_css():
     .stDeployButton {display: none;}
     </style>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          const buttons = document.querySelectorAll('button');
-          buttons.forEach(button => {
-              if (button.textContent.includes('adminpanel')) {
-                  button.style.cssText = `
-                      background: none !important;
-                      border: none !important;
-                      padding: 0 !important;
-                      font-size: 0.5rem !important;
-                      color: #FFFFFF !important;
-                      box-shadow: none !important;
-                  `;
-              }
-          });
-      });
-    </script>
     """, unsafe_allow_html=True)
 
 
@@ -467,7 +422,8 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.button(label="adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
+        if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
+            st.write("adminpanel")
             st.session_state.page = "admin"
             st.rerun()
                      
