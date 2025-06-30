@@ -120,7 +120,7 @@ def load_css():
     }
 
     /* Selector sangat spesifik untuk tombol dengan key "admin_panel_bottom" */
-    div.stButton.stKey-admin_panel_bottom > button {
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2):nth-last-child(2) .st-key-admin_panel_bottom > button {
         background: none !important;
         border: none !important;
         padding: 0 !important;
@@ -132,14 +132,14 @@ def load_css():
     }
 
     /* Hover */
-    div.stButton.stKey-admin_panel_bottom > button:hover {
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2):nth-last-child(2) .st-key-admin_panel_bottom > button:hover {
         text-decoration: underline !important;
         color: #FFFFFF !important;
     }
 
     /* Active/focus */
-    div.stButton.stKey-admin_panel_bottom > button:active,
-    div.stButton.stKey-admin_panel_bottom > button:focus {
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2):nth-last-child(2) .st-key-admin_panel_bottom > button:active,
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2):nth-last-child(2) .st-key-admin_panel_bottom > button:focus {
         transform: none !important;
         box-shadow: none !important;
         outline: none !important;
