@@ -51,18 +51,6 @@ def load_css():
             st.session_state.page = "list"
             st.rerun()
 
-    .stButton > button:contains("MieMeans") {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        min-height: auto !important;
-        height: auto !important;
-        font-size: 0.6rem !important;
-        font-weight: 200 !important;
-        box-shadow: none !important;
-        cursor: pointer !important;
-    }
-
     /* Override Streamlit button styling for navigation */
     .nav-buttons .stButton > button {
         background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #ebebeb 100%) !important;
@@ -101,6 +89,19 @@ def load_css():
         padding: 0.75rem 1.5rem !important;
         font-weight: 500 !important;
         transition: all 0.2s ease !important;
+    }
+    
+    .stButton > button[kind="secondary"], 
+    .stButton > button:contains("MieMeans") {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        min-height: auto !important;
+        height: auto !important;
+        font-size: 0.6rem !important;
+        font-weight: 200 !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
     }
     
     /* Form styling */
