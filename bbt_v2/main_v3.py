@@ -78,6 +78,35 @@ def load_css():
         transform: translateY(0px) !important;
         box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
     }
+
+    /* ========== OVERRIDE NAV BUTTONS SEBAGAI TEKS ========== */
+    /* Target berdasarkan text dan key widget */
+    div.stButton:has(button:contains("adminpanel")) > button,
+    .stButton > button.stkey-admin_panel_bottom {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        font-size: 0.5rem !important;
+        font-weight: 400 !important;
+        color: #FFFFFF !important;    /* Warna teks link Apple */
+        cursor: pointer !important;
+    }
+
+    /* Hover: beri underline dan ubah warna */
+    div.stButton:has(button:contains("adminpanel")) > button:hover,
+    .stButton > button.stkey-admin_panel_bottom:hover {
+        text-decoration: underline !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Active: hilangkan efek translate */
+    div.stButton:has(button:contains("adminpanel")) > button:active,
+    .stButton > button.stkey-admin_panel_bottom:active {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
     
     /* Primary action buttons (Submit) */
     .stButton > button[kind="primary"], 
