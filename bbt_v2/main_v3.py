@@ -391,8 +391,8 @@ def booking_list_page():
                 df['Tanggal'] = pd.to_datetime(df['tanggal_booking']).dt.strftime('%d/%m/%Y')
                 df['Waktu'] = df['waktu_mulai'].str[:5] + ' - ' + df['waktu_selesai'].str[:5]
                 
-                display_df = df[['Tanggal', 'Waktu', 'nama', 'subdir', 'ruang_meeting', 'keterangan']].copy()
-                display_df.columns = ['Tanggal', 'Waktu', 'Nama', 'Sub Direktorat', 'Ruang', 'Keterangan']
+                display_df = df[['Tanggal', 'Waktu', 'nama', 'subdir', 'floor', 'ruang_meeting', 'keterangan']].copy()
+                display_df.columns = ['Tanggal', 'Waktu', 'Nama', 'Sub Direktorat', 'Lantai', 'Ruang', 'Keterangan']
                 
                 st.dataframe(display_df, use_container_width=True, hide_index=True)
                 
@@ -403,8 +403,8 @@ def booking_list_page():
                 filtered_df = df[df['tanggal_booking'] == str(filter_date)]
                 if not filtered_df.empty:
                     st.write(f"**Booking untuk tanggal {filter_date.strftime('%d/%m/%Y')}:**")
-                    display_filtered = filtered_df[['Waktu', 'nama', 'subdir', 'ruang_meeting', 'keterangan']].copy()
-                    display_filtered.columns = ['Waktu', 'Nama', 'Sub Direktorat', 'Ruang', 'Keterangan']
+                    display_filtered = filtered_df[['Waktu', 'nama', 'subdir', 'floor', 'ruang_meeting', 'keterangan']].copy()
+                    display_filtered.columns = ['Waktu', 'Nama', 'Sub Direktorat', 'Lantai', 'Ruang', 'Keterangan']
                     st.dataframe(display_filtered, use_container_width=True, hide_index=True)
                 else:
                     st.info("Tidak ada booking pada tanggal tersebut")
