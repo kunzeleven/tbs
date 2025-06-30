@@ -329,7 +329,7 @@ def booking_form_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.stTextInput("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.markdown("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
@@ -418,7 +418,7 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.stTextInput("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.markdown("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
