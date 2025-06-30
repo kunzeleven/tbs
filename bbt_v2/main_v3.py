@@ -90,24 +90,26 @@ def load_css():
         font-weight: 500 !important;
         transition: all 0.2s ease !important;
     }
-    
-    div[data-testid="stButton"] > button[data-testid="stBaseButton-secondary"]:has-text("MieMeans"),
-    div[data-testid="stButton"] > button[key="admin_panel_bottom"],
-    .stButton > button[data-testid="stBaseButton-secondary"]:has-text("MieMeans"),
-    .st-key-admin_panel_bottom .stButton > button,
-    div.stButton > button.st-key-admin_panel_bottom {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        min-height: auto !important;
-        height: auto !important;
-        font-size: 0.9rem !important;
-        font-weight: 400 !important;
-        color: #ffffff !important;
-        box-shadow: none !important;
-        cursor: pointer !important;
-        transition: color 0.15s ease !important;
-    }
+
+    st.markdown("""
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('MieMeans')) {
+                button.style.cssText = `
+                    background: none !important;
+                    border: none !important;
+                    padding: 0 !important;
+                    font-size: 0.5rem !important;
+                    color: #FFFFFF !important;
+                    box-shadow: none !important;
+                `;
+            }
+        });
+    });
+    </script>
+    """, unsafe_allow_html=True)
     
     /* Form styling */
     .stForm {
@@ -288,7 +290,7 @@ def booking_form_page():
         with col1:
             nama = st.text_input("Nama *", placeholder="Masukkan Nama Lengkap")
             subdir = st.text_input("Sub Direktorat", placeholder="Masukkan Sub Direktorat")
-            floor = st.text_input("Lantai Meeting *", placeholder="Lantai 19")
+            floor = st.text_input("Lantai Meeting *", placeholder="19")
             
         with col2:
             ruang_meeting = st.selectbox("Ruang Meeting *", ["", "Breakout Traction", "Cozy 19.2"])
@@ -438,12 +440,11 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.button("MieMeans", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.buttom(label="MieMeans", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
     #st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
-
 
 # Halaman Admin
 def admin_page():
