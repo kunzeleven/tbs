@@ -181,7 +181,7 @@ def validate_name(name: str) -> Tuple[bool, str]:
 #    phone_clean = re.sub(r'[^\d]', '', phone)
 #    if len(phone_clean) < 10 or len(phone_clean) > 15:
 #        return False, "Nomor HP tidak valid (10-15 digit)"
-#    return True, ""
+    return True, ""
 
 def validate_time_range(start_time: time, end_time: time) -> Tuple[bool, str]:
     if start_time >= end_time:
@@ -258,9 +258,9 @@ def booking_form_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            nama = st.text_input("Nama *", placeholder="Masukkan nama lengkap")
-            subdir = st.text_input("Sub Direktorat", placeholder="Masukkan sub direktorat")
-            #no_hp = st.text_input("No. HP *", placeholder="Contoh: 08123456789")
+            nama = st.text_input("Nama *", placeholder="Masukkan Nama Lengkap")
+            subdir = st.text_input("Sub Direktorat", placeholder="Masukkan Sub Direktorat")
+            floor = st.text_input("Lantai Meeting *", placeholder="Lantai 19")
             
         with col2:
             ruang_meeting = st.selectbox("Ruang Meeting *", ["", "Breakout Traction", "Cozy 19.2"])
@@ -284,7 +284,7 @@ def booking_form_page():
             if not is_valid:
                 errors.append(error)
                 
-            #is_valid, error = validate_phone(no_hp)
+            #is_valid, error = validate_phone(floor)
             #if not is_valid:
             #    errors.append(error)
                 
@@ -311,7 +311,7 @@ def booking_form_page():
                             data = {
                                 "nama": nama.strip(),
                                 "subdir": subdir.strip(),
-                                #"no_hp": no_hp.strip(),
+                                "floor": floor.strip(),
                                 "ruang_meeting": ruang_meeting,
                                 "tanggal_booking": str(tanggal_booking),
                                 "waktu_mulai": str(waktu_mulai),
@@ -329,7 +329,7 @@ def booking_form_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.stTextInput("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
@@ -418,7 +418,7 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.stTextInput("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
@@ -458,7 +458,7 @@ def admin_page():
             
             if result.data:
                 df = pd.DataFrame(result.data)
-                df.drop(columns=["no_hp"], inplace=True, errors="ignore")
+                df.drop(columns=["floor"], inplace=True, errors="ignore")
               
                 # PERBAIKAN: Konversi tipe data yang benar
                 try:
@@ -480,7 +480,7 @@ def admin_page():
                         "id": st.column_config.NumberColumn("ID", disabled=True),
                         "nama": st.column_config.TextColumn("Nama", required=True),
                         "subdir": st.column_config.TextColumn("Sub Direktorat"),
-                        #"no_hp": st.column_config.TextColumn("No. HP", required=True),
+                        "floor": st.column_config.TextColumn("No. HP", required=True),
                         "ruang_meeting": st.column_config.SelectboxColumn(
                             "Ruang Meeting",
                             options=["Breakout Traction", "Cozy 19.2"],
