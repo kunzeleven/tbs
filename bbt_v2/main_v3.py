@@ -420,12 +420,10 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.buttom(label="MieMeans", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
-    # tambahkan kelas CSS agar ter-target
-    #st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
-
+                     
 # Halaman Admin
 def admin_page():
     st.markdown('<div class="main-header"><h1>⚙️ Admin Panel</h1></div>', unsafe_allow_html=True)
@@ -568,7 +566,7 @@ def load_css_and_js():
       document.addEventListener('DOMContentLoaded', function() {
           const buttons = document.querySelectorAll('button');
           buttons.forEach(button => {
-              if (button.textContent.includes('MieMeans')) {
+              if (button.textContent.includes('adminpanel')) {
                   button.style.cssText = `
                       background: none !important;
                       border: none !important;
