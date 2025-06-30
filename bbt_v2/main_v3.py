@@ -120,7 +120,7 @@ def load_css():
     }
 
     /* Targeting button berdasarkan posisi dalam column */
-    .stButton:has(button:contains("⚙️ Admin Panel")) > button {
+    .stButton:has(button:contains("MieMeans")) > button {
         background: none !important;
         border: none !important;
         padding: 0 !important;
@@ -131,13 +131,6 @@ def load_css():
         /* color: #007AFF !important; */
         box-shadow: none !important;
         cursor: pointer !important;
-    }
-
-    .stButton:has(button:contains("⚙️ Admin Panel")) > button:hover {
-        text-decoration: underline !important;
-        /* color: #0056CC !important; */
-        transform: none !important;
-        background: none !important;
     }
 
     
@@ -359,14 +352,6 @@ def booking_form_page():
                             
                         except Exception as e:
                             st.error(f"Error menyimpan data: {str(e)}")
-    # ----- TOMBOL ADMIN DI BAWAH FORM -----
-    bottom_left, bottom_center, bottom_right = st.columns(3)
-    with bottom_center:
-        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
-            st.session_state.page = "admin"
-            st.rerun()
-    # tambahkan kelas CSS agar ter-target
-    #st.markdown("""<div class="admin-btn"></div>""", unsafe_allow_html=True)
 
 def debug_supabase_connection():
     """Fungsi untuk debugging koneksi Supabase"""
@@ -451,7 +436,7 @@ def booking_list_page():
     # ----- TOMBOL ADMIN DI BAWAH FORM -----
     bottom_left, bottom_center, bottom_right = st.columns(3)
     with bottom_center:
-        if st.button("⚙️ Admin Panel", key="admin_panel_bottom", use_container_width=True, type="secondary"):
+        if st.button("MieMeans", key="admin_panel_bottom", use_container_width=True, type="secondary"):
             st.session_state.page = "admin"
             st.rerun()
     # tambahkan kelas CSS agar ter-target
