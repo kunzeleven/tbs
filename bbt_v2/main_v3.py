@@ -27,6 +27,8 @@ def load_css():
         background-color: #ffffff !important;
         color: #000000 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color-scheme: light;
+
     }
     
     /* Header styling - Minimalist Apple Style */
@@ -103,6 +105,7 @@ def load_css():
         border-radius: 12px;
         border: 1px solid #e9ecef;
         box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        color-scheme: light;
     }
     
     /* Input styling */
@@ -110,12 +113,13 @@ def load_css():
     .stSelectbox > div > div > select,
     .stDateInput > div > div > input,
     .stTimeInput > div > div > input {
-        border: 1px solid #d1d5db;
-        border-radius: 14px;
-        padding: 0.75rem;
-        font-size: 16px;
-        transition: border-color 0.2s ease;
-        color-scheme: light
+        border: 1px solid #d1d5db !important;
+        border-radius: 14px !important;
+        padding: 0.75rem !important;
+        font-size: 16px !important;
+        transition: border-color 0.2s ease !important;
+        color-scheme: light !important;
+
     }
     
     .stTextInput > div > div > input:focus,
