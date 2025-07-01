@@ -28,7 +28,7 @@ def load_css():
         color: #000000 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color-scheme: light;
-
+        text-align: center
     }
     
     /* Header styling - Minimalist Apple Style */
