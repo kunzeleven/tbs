@@ -20,7 +20,8 @@ def load_css():
     st.markdown("""
     <style>
     :root {
-      color-scheme: light;
+        color-scheme: light;
+        text-align: center
     }
     /* Reset dan base styling */
     .stApp {
