@@ -7,14 +7,6 @@ import bcrypt
 from typing import Optional, Tuple
 import os
 
-
-config_path = os.path.join(".streamlit", "config.toml")
-
-if os.path.exists(config_path):
-    print("File config.toml ditemukan.")
-else:
-    print("File config.toml tidak ditemukan.")
-
 # Konfigurasi halaman
 st.set_page_config(
     page_title="Meeting Room Booking",
