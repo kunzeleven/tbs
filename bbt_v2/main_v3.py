@@ -353,8 +353,9 @@ def booking_form_page():
     st.markdown("")
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown(''':gray[--please use light mode theme in web browser to get better experience--]''') 
-        st.markdown(''':gray[--for adding new meeting room please contact rania traction--]''')
+        st.markdown("*-please use light mode in browser to get better experience-*") 
+        #st.markdown(''':gray[--please use light mode theme in web browser to get better experience--]''') 
+        st.markdown(''':blue[-for adding new meeting room please contact rania traction-]''')
 
 def debug_supabase_connection():
     """Fungsi untuk debugging koneksi Supabase"""
