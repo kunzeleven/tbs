@@ -128,16 +128,6 @@ def load_css():
         box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
         color-scheme: light
     }
-
-
-    .center-note {
-        text-align: center;
-        font-size: 0.8rem;
-        color: gray;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
@@ -363,12 +353,8 @@ def booking_form_page():
     st.markdown("")
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown("""
-        <div class='center-note'>
-            --please use light mode theme in web browser to get better experience--<br>
-            --for adding new meeting room please contact rania traction--
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(''':gray[--please use light mode theme in web browser to get better experience--]''') 
+        st.markdown(''':gray[--for adding new meeting room please contact rania traction--]''')
 
 def debug_supabase_connection():
     """Fungsi untuk debugging koneksi Supabase"""
