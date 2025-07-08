@@ -306,13 +306,24 @@ def booking_form_page():
             is_valid, error = validate_name(nama)
             if not is_valid:
                 errors.append(error)
+
+            if not nama or not nama.strip():
+                errors.append("Nama harus diisi")
+            else:
+                is_valid, error = validate_name(nama)
+                if not is_valid:
+                    errors.append(error)
                 
-            #is_valid, error = validate_phone(floor)
-            #if not is_valid:
-            #    errors.append(error)
+            if not floor or not floor.strip():
+                errors.append("Lantai Meeting harus diisi")
                 
             if not ruang_meeting:
                 errors.append("Ruang meeting harus dipilih")
+
+            if not keterangan or not keterangan.strip():
+                errors.append("Keterangan Meeting harus diisi")
+            elif len(keterangan.strip()) < 10:
+                errors.append("Keterangan Meeting minimal 10 karakter")
                 
             is_valid, error = validate_time_range(waktu_mulai, waktu_selesai)
             if not is_valid:
