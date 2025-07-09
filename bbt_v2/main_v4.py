@@ -206,7 +206,7 @@ def booking_form_page() -> None:
             waktu_mulai = st.time_input("Waktu Mulai", value=time(9, 0))
         with col2:
             waktu_selesai = st.time_input("Waktu Selesai", value=time(10, 0))
-        keterangan = st.text_area("Keterangan (opsional)", height=80)
+        keterangan = st.text_area("Keterangan", height=80)
 
         submit = st.form_submit_button("💾 Simpan Booking")
 
@@ -227,6 +227,17 @@ def booking_form_page() -> None:
         if not valid:
             st.error(msg)
             st.stop()
+
+        if not floor or not floor.strip():
+                errors.append("Lantai Meeting harus diisi")
+                
+        if not ruang_meeting:
+                errors.append("Ruang meeting harus dipilih")
+
+        if not keterangan or not keterangan.strip():
+                errors.append("Keterangan Meeting harus diisi")
+        elif len(keterangan.strip()) < 10:
+                errors.append("Keterangan Meeting minimal 10 karakter")
 
         try:
             supabase.table("bookings").insert(
