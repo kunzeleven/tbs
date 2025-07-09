@@ -336,10 +336,15 @@ def booking_list_page() -> None:
             )
 
         # Filter ruang meeting (opsional)
+        #ruang_opsi = ["Semua Ruang", "Breakout Traction", "Cozy 19.2"]
+        #room_filter = st.selectbox("Filter Ruang Meeting", ruang_opsi)
+        #if room_filter != "Semua Ruang":
+        #    events = [e for e in events if e["extendedProps"]["ruang_meeting"] == room_filter]
+
         ruang_opsi = ["Semua Ruang", "Breakout Traction", "Cozy 19.2"]
         room_filter = st.selectbox("Filter Ruang Meeting", ruang_opsi)
         if room_filter != "Semua Ruang":
-            events = [e for e in events if e["extendedProps"]["ruang_meeting"] == room_filter]
+            events = [e for e in events if e.get("extendedProps", {}).get("ruang_meeting") == room_filter]
 
         # Opsi & rendering kalender
         cal_options = {
