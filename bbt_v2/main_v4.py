@@ -207,7 +207,7 @@ def booking_form_page() -> None:
         keterangan = st.text_area("Keterangan", height=80)
 
         # Center the submit button using columns
-        col1, col2, col3 = st.columns([5, 2, 1])
+        col1, col2, col3 = st.columns([4, 2, 2])
         with col3:
             submit = st.form_submit_button("💾 Simpan Booking")
 
