@@ -182,8 +182,8 @@ def booking_form_page() -> None:
     )
 
     # Navigasi ke daftar
-    _, colR = st.columns([8, 2])
-    with colR:
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
         if st.button("📋 Lihat Daftar Booking", use_container_width=True):
             st.session_state.page = "list"
             st.rerun()
@@ -198,7 +198,7 @@ def booking_form_page() -> None:
     with st.form("booking_form", clear_on_submit=False):
         nama = st.text_input("Nama Pemesan")
         subdir = st.text_input("Sub Direktorat")
-        floor = st.selectbox("Lantai", ["16", "17", "18", "19", "20"])
+        floor = st.selectbox("Lantai", ["19"])
         ruang_meeting = st.selectbox("Ruang Meeting", ["Breakout Traction", "Cozy 19.2"])
         booking_date = st.date_input("Tanggal Booking", value=date.today())
         col1, col2 = st.columns(2)
@@ -259,15 +259,15 @@ def booking_list_page() -> None:
     )
 
     # Tombol navigasi
-    col1, col2, _ = st.columns([1, 1, 8])
-    with col1:
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
         if st.button("➕ Tambah Booking", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
-    with col2:
-        if st.button("⚙️ Admin Panel", use_container_width=True):
-            st.session_state.page = "admin"
-            st.rerun()
+    #with col2:
+    #    if st.button("⚙️ Admin Panel", use_container_width=True):
+    #        st.session_state.page = "admin"
+    #        st.rerun()
 
     st.markdown("---")
 
