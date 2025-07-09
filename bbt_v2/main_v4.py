@@ -239,6 +239,10 @@ def booking_form_page() -> None:
             errors.append("Ruang meeting harus dipilih")
             errors.append("Ruang meeting harus dipilih")
 
+        if not subdir or not subdir.strip():
+            errors.append("Subdir harus diisi")
+            errors.append("Subdir harus diisi")
+            
         if not keterangan or not keterangan.strip():
             errors.append("Keterangan Meeting harus diisi")
             errors.append("Keterangan Meeting harus diisi")
