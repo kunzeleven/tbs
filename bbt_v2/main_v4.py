@@ -208,7 +208,10 @@ def booking_form_page() -> None:
             waktu_selesai = st.time_input("Waktu Selesai", value=time(10, 0))
         keterangan = st.text_area("Keterangan", height=80)
 
-        submit = st.form_submit_button("💾 Simpan Booking")
+        # Center the submit button using columns
+        col_left, col_center, col_right = st.columns([3, 2, 3])
+        with col_center:
+            submit = st.form_submit_button("💾 Simpan Booking")
 
     if submit:
         errors = []
