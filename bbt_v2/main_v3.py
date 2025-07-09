@@ -1,6 +1,6 @@
 """
 Aplikasi Booking Meeting Room
-Versi: 3.1 – Calendar View
+Versi: 4 – Calendar View
 Penulis: kunz
 Deskripsi:
 Aplikasi Streamlit untuk melakukan booking ruang meeting dengan tampilan daftar
@@ -287,10 +287,6 @@ def booking_list_page() -> None:
         if st.button("➕ Tambah Booking", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
-    #with col2:
-    #    if st.button("⚙️ Admin Panel", use_container_width=True):
-    #        st.session_state.page = "admin"
-    #        st.rerun()
 
     st.markdown("---")
 
@@ -335,11 +331,33 @@ def booking_list_page() -> None:
                 }
             )
 
-        # Filter ruang meeting (opsional)
+        # ── PERBAIKAN FILTER DENGAN SESSION STATE ──────────────────────────
+        # Inisialisasi session state untuk filter
+        if "room_filter" not in st.session_state:
+            st.session_state.room_filter = "Semua Ruang"
+
+        # Filter ruang meeting dengan session state
         ruang_opsi = ["Semua Ruang", "Breakout Traction", "Cozy 19.2"]
-        room_filter = st.selectbox("Filter Ruang Meeting", ruang_opsi)
-        if room_filter != "Semua Ruang":
-            events = [e for e in events if e["extendedProps"]["ruang_meeting"] == room_filter]
+        room_filter = st.selectbox(
+            "Filter Ruang Meeting", 
+            ruang_opsi,
+            index=ruang_opsi.index(st.session_state.room_filter),
+            key="room_filter_select"
+        )
+        
+        # Update session state jika filter berubah
+        if room_filter != st.session_state.room_filter:
+            st.session_state.room_filter = room_filter
+            # Regenerate calendar key untuk refresh
+            st.session_state.calendar_key = str(uuid.uuid4())
+
+        # Apply filter ke events
+        filtered_events = events
+        if st.session_state.room_filter != "Semua Ruang":
+            filtered_events = [
+                e for e in events 
+                if e.get("extendedProps", {}).get("ruang_meeting") == st.session_state.room_filter
+            ]
 
         # Opsi & rendering kalender
         cal_options = {
@@ -364,8 +382,9 @@ def booking_list_page() -> None:
         if "calendar_key" not in st.session_state:
             st.session_state.calendar_key = str(uuid.uuid4())
 
+        # Gunakan filtered_events instead of events
         cal_state = calendar(
-            events=events,
+            events=filtered_events,
             options=cal_options,
             key=st.session_state.calendar_key,
         )
@@ -394,8 +413,9 @@ def booking_list_page() -> None:
         colA, colB = st.columns(2)
         with colA:
             st.markdown("🔴 **Breakout Traction**")
-        with colB:
             st.markdown("🟢 **Cozy 19.2**")
+        #with colB:
+        #    st.markdown(" Cozy 19.2")
 
     except Exception as err:
         st.error(f"Error memuat data: {err}")
