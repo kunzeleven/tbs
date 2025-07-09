@@ -409,12 +409,6 @@ def booking_list_page() -> None:
 
         # ── Legend warna ────────────────────────────────────────────────────
         st.subheader("📌 Keterangan Warna")
-        #colA, colB = st.columns(2)
-        #with colA:
-        #    st.markdown("🔴 **Breakout Traction**")
-        #with colB:
-        #    st.markdown("🟢 **Cozy 19.2**")
-
         st.markdown("🔴 **Breakout Traction**")
         st.markdown("🟢 **Cozy 19.2**")
 
