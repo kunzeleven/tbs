@@ -419,7 +419,10 @@ def booking_list_page():
             
             if result.data:
                 df = pd.DataFrame(result.data)
-                
+
+                # Sorting berdasarkan tanggal_booking dan waktu_mulai_dt secara ascending
+                df = df.sort_values(by=['tanggal_booking', 'waktu_mulai'], ascending=[True, True])
+
                 # Format data untuk display
                 df['Tanggal'] = pd.to_datetime(df['tanggal_booking']).dt.strftime('%d/%m/%Y')
                 df['Waktu'] = df['waktu_mulai'].str[:5] + ' - ' + df['waktu_selesai'].str[:5]
