@@ -233,21 +233,16 @@ def booking_form_page() -> None:
 
         if not floor or not floor.strip():
             errors.append("Lantai Meeting harus diisi")
-            errors.append("Lantai Meeting harus diisi")
 
         if not ruang_meeting:
-            errors.append("Ruang meeting harus dipilih")
             errors.append("Ruang meeting harus dipilih")
 
         if not subdir or not subdir.strip():
             errors.append("Subdir harus diisi")
-            errors.append("Subdir harus diisi")
             
         if not keterangan or not keterangan.strip():
             errors.append("Keterangan Meeting harus diisi")
-            errors.append("Keterangan Meeting harus diisi")
         elif len(keterangan.strip()) < 10:
-            errors.append("Keterangan Meeting minimal 10 karakter")
             errors.append("Keterangan Meeting minimal 10 karakter")
 
         if errors:
