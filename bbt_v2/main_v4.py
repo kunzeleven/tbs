@@ -229,15 +229,15 @@ def booking_form_page() -> None:
             st.stop()
 
         if not floor or not floor.strip():
-                errors.append("Lantai Meeting harus diisi")
+            errors.append("Lantai Meeting harus diisi")
                 
         if not ruang_meeting:
-                errors.append("Ruang meeting harus dipilih")
+            errors.append("Ruang meeting harus dipilih")
 
         if not keterangan or not keterangan.strip():
-                errors.append("Keterangan Meeting harus diisi")
+            errors.append("Keterangan Meeting harus diisi")
         elif len(keterangan.strip()) < 10:
-                errors.append("Keterangan Meeting minimal 10 karakter")
+            errors.append("Keterangan Meeting minimal 10 karakter")
 
         try:
             supabase.table("bookings").insert(
