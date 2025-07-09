@@ -1,198 +1,98 @@
+"""
+Aplikasi Booking Meeting Room
+Versi: 3.1 – Calendar View
+Penulis: kunz
+Deskripsi:
+Aplikasi Streamlit untuk melakukan booking ruang meeting dengan tampilan daftar
+booking berbasis kalender (menggunakan streamlit-calendar) serta form input,
+admin panel, dan validasi lengkap.
+"""
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime, date, time
 import re
 from supabase import create_client, Client
 import bcrypt
-from typing import Optional, Tuple
+from typing import Tuple
 import os
+import uuid
 
-# Konfigurasi halaman
+# ──────────────────────────────────────────────────────────────────────────────
+# 1. KONFIGURASI HALAMAN & CSS
+# ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Meeting Room Booking",
     page_icon="🏢",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
-# CSS untuk styling Apple-like
-def load_css():
-    st.markdown("""
-    <style>
-    :root {
-        color-scheme: light;
-        text-align: center
-    }
-    /* Reset dan base styling */
-    .stApp {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color-scheme: light;
-        text-align: center
-    }
-    
-    /* Header styling - Minimalist Apple Style */
-    .main-header {
-        background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 50%, #d8d8d8 100%);
-        #padding: 1rem 2rem;
-        border-radius: 14px;
-        margin-bottom: 1.5rem;
-        color: #333333;
-        text-align: center;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    
-    .main-header h1 {
-        font-size: 1.5rem !important;
-        font-weight: 500 !important;
-        margin: 0 !important;
-        color: #2c2c2c;
-        letter-spacing: -0.02em;
-    }
+def load_css() -> None:
+    """Memuat custom CSS bergaya minimalis Apple-like."""
+    st.markdown(
+        """
+        <style>
+        /* Reset & base */
+        .stApp     {background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
 
-    nav_left, nav_right = st.columns([8,2])   # kolom lebar & sempit
-    with nav_right:
-        if st.button("📋 Lihat Daftar Booking", use_container_width=True):
-            st.session_state.page = "list"
-            st.rerun()
+        /* Header */
+        .main-header{
+            background:linear-gradient(135deg,#f8f8f8 0%,#e8e8e8 50%,#d8d8d8 100%);
+            border:1px solid #e0e0e0;border-radius:14px;margin-bottom:1.5rem;
+            text-align:center;color:#333;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+        .main-header h1{font-size:1.6rem !important;font-weight:500;margin:0;}
 
-    /* Override Streamlit button styling for navigation */
-    .nav-buttons .stButton > button {
-        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #ebebeb 100%) !important;
-        border: 1px solid #d1d1d1 !important;
-        border-radius: 14px !important;
-        padding: 0.4rem 0.8rem !important;
-        font-size: 0.85rem !important;
-        font-weight: 400 !important;
-        color: #333333 !important;
-        transition: all 0.2s ease !important;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
-        height: auto !important;
-        min-height: auto !important;
-    }
-    
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #f8f8f8 0%, #eeeeee 50%, #e0e0e0 100%) !important;
-        border-color: #b8b8b8 !important;
-        transform: translateY(-0.5px) !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
-        color: #1a1a1a !important;
-    }
-    
-    .stButton > button:active {
-        transform: translateY(0px) !important;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
-    }
+        /* Calendar overrides */
+        .fc-event         {border-radius:5px;padding:2px 5px;font-size:12px;}
+        .fc-event-title   {font-weight:600;}
+        .fc-daygrid-event {margin:1px 0;}
+        .fc-toolbar-title {font-size:1.4rem;font-weight:700;color:#333;}
+        .fc-button        {background:#4ECDC4;border-color:#4ECDC4;}
+        .fc-button:hover  {background:#45B7AA;border-color:#45B7AA;}
+        .fc-today         {background:#FFF3CD !important;}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
+load_css()
 
-    /* Primary action buttons (Submit) */
-    .stButton > button[kind="primary"], 
-    .stButton > button:contains("Submit") {
-        background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 14px !important;
-        padding: 0.75rem 1.5rem !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
-    }
-    
-    /* Form styling */
-    .stForm {
-        background: #f8f9fa;
-        padding: 2rem;
-        border-radius: 12px;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        color-scheme: light;
-    }
-    
-    /* Input styling */
-    .stTextInput > div > div > input,
-    .stSelectbox > div > div > select,
-    .stDateInput > div > div > input,
-    .stTimeInput > div > div > input {
-        border: 1px solid #d1d5db !important;
-        border-radius: 14px !important;
-        padding: 0.75rem !important;
-        font-size: 16px !important;
-        transition: border-color 0.2s ease !important;
-        color-scheme: light !important;
-
-    }
-    
-    .stTextInput > div > div > input:focus,
-    .stSelectbox > div > div > select:focus {
-        border-color: #007AFF;
-        box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
-        color-scheme: light
-    }
-    
-    /* Hide Streamlit elements */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    .stDeployButton {display: none;}
-    </style>
-
-    """, unsafe_allow_html=True)
-
-
-# Inisialisasi Supabase connection
-@st.cache_resource
-def init_supabase():
+# ──────────────────────────────────────────────────────────────────────────────
+# 2. INISIALISASI SUPABASE
+# ──────────────────────────────────────────────────────────────────────────────
+@st.cache_resource(show_spinner=False)
+def init_supabase() -> Client | None:
+    """Membuat koneksi Supabase dan melakukan pengecekan."""
     try:
-        # Validasi apakah secrets tersedia
         if "supabase" not in st.secrets:
             st.error("⚠️ Konfigurasi Supabase tidak ditemukan dalam secrets")
             return None
-            
-        url = st.secrets["supabase"]["url"]
-        key = st.secrets["supabase"]["key"]
-        
-        # Validasi format URL dan key
-        if not url or not url.startswith("https://"):
+        url: str = st.secrets["supabase"]["url"]
+        key: str = st.secrets["supabase"]["key"]
+
+        if not url.startswith("https://"):
             st.error("⚠️ URL Supabase tidak valid")
             return None
-            
-        if not key or len(key) < 100:  # Anon key biasanya panjang
+        if len(key) < 100:
             st.error("⚠️ API Key Supabase tidak valid")
             return None
-            
-        # Buat client Supabase
-        supabase = create_client(url, key)
-        
-        # Test koneksi
-        try:
-            # Coba query sederhana untuk test koneksi
-            test_result = supabase.table('bookings').select('count').execute()
-            return supabase
-        except Exception as test_error:
-            st.error(f"⚠️ Gagal terhubung ke database: {str(test_error)}")
-            return None
-            
-    except KeyError as e:
-        st.error(f"⚠️ Konfigurasi tidak lengkap: {str(e)}")
-        return None
-    except Exception as e:
-        st.error(f"⚠️ Error saat inisialisasi Supabase: {str(e)}")
+
+        supabase: Client = create_client(url, key)
+        supabase.table("bookings").select("id").limit(1).execute()  # quick test
+        return supabase
+    except Exception as err:
+        st.error(f"⚠️ Gagal terhubung ke Supabase: {err}")
         return None
 
-# Fungsi validasi
+# ──────────────────────────────────────────────────────────────────────────────
+# 3. VALIDASI INPUT
+# ──────────────────────────────────────────────────────────────────────────────
 def validate_name(name: str) -> Tuple[bool, str]:
     if not name or len(name.strip()) < 2:
         return False, "Nama harus diisi minimal 2 karakter"
-    if not re.match(r'^[A-Za-z\s]+$', name.strip()):
+    if not re.match(r"^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", name.strip()):
         return False, "Nama hanya boleh berisi huruf dan spasi"
-    return True, ""
-
-#def validate_phone(phone: str) -> Tuple[bool, str]:
-#    if not phone:
-#        return False, "Nomor HP harus diisi"
-#    phone_clean = re.sub(r'[^\d]', '', phone)
-#    if len(phone_clean) < 10 or len(phone_clean) > 15:
-#        return False, "Nomor HP tidak valid (10-15 digit)"
     return True, ""
 
 def validate_time_range(start_time: time, end_time: time) -> Tuple[bool, str]:
@@ -200,411 +100,379 @@ def validate_time_range(start_time: time, end_time: time) -> Tuple[bool, str]:
         return False, "Waktu selesai harus lebih besar dari waktu mulai"
     return True, ""
 
-def validate_booking_conflict(supabase: Client, booking_date: date, start_time: time, 
-                            end_time: time, room: str, booking_id: int = None) -> Tuple[bool, str]:
+def validate_booking_conflict(
+    supabase: Client,
+    booking_date: date,
+    start_time: time,
+    end_time: time,
+    room: str,
+    booking_id: int | None = None,
+) -> Tuple[bool, str]:
+    """Cek bentrok jadwal di database."""
     try:
-        query = supabase.table('bookings').select('*').eq('tanggal_booking', str(booking_date)).eq('ruang_meeting', room)
+        query = (
+            supabase.table("bookings")
+            .select("*")
+            .eq("tanggal_booking", str(booking_date))
+            .eq("ruang_meeting", room)
+        )
         if booking_id:
-            query = query.neq('id', booking_id)
-        
-        result = query.execute()
-        
-        for booking in result.data:
-            existing_start = datetime.strptime(booking['waktu_mulai'], '%H:%M:%S').time()
-            existing_end = datetime.strptime(booking['waktu_selesai'], '%H:%M:%S').time()
-            
-            if (start_time < existing_end and end_time > existing_start):
-                return False, f"Konflik jadwal dengan booking {booking['nama']} ({existing_start}-{existing_end})"
-        
-        return True, ""
-    except Exception as e:
-        return False, "Error validating booking conflict"
+            query = query.neq("id", booking_id)
 
-# Fungsi autentikasi admin
-def check_admin_auth() -> bool:
-    if 'admin_authenticated' not in st.session_state:
+        result = query.execute()
+        for booking in result.data:
+            existing_start = datetime.strptime(booking["waktu_mulai"], "%H:%M:%S").time()
+            existing_end = datetime.strptime(booking["waktu_selesai"], "%H:%M:%S").time()
+            if start_time < existing_end and end_time > existing_start:
+                return (
+                    False,
+                    f"Konflik dengan {booking['nama']} ({existing_start}-{existing_end})",
+                )
+        return True, ""
+    except Exception:
+        return False, "Error saat memeriksa konflik jadwal"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 4. AUTHENTIKASI ADMIN
+# ──────────────────────────────────────────────────────────────────────────────
+def admin_authenticated() -> bool:
+    if "admin_authenticated" not in st.session_state:
         st.session_state.admin_authenticated = False
     return st.session_state.admin_authenticated
 
-def admin_login():
+def admin_login_page() -> None:
     st.subheader("🔐 Admin Login")
 
-    # Navigation buttons
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2, _ = st.columns([1, 1, 8])
     with col1:
-        if st.button("🔙 Kembali ke Daftar Booking", use_container_width=True):
+        if st.button("🔙 Daftar Booking", use_container_width=True):
             st.session_state.page = "list"
             st.rerun()
     with col2:
-        if st.button("🔙 Kembali ke Form", use_container_width=True):
+        if st.button("➕ Form Booking", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
-    
+
     with st.form("admin_login_form"):
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         submit = st.form_submit_button("Login")
-        
+
         if submit:
-            # Hash password yang benar (ganti dengan password yang diinginkan)
-            correct_username = st.secrets.get("admin", {}).get("username", "admin")
-            correct_password_hash = st.secrets.get("admin", {}).get("password_hash", "")
-            
-            if username == correct_username and bcrypt.checkpw(password.encode('utf-8'), correct_password_hash.encode('utf-8')):
+            cfg_admin = st.secrets.get("admin", {})
+            correct_username = cfg_admin.get("username", "admin")
+            correct_pw_hash = cfg_admin.get("password_hash", "")
+            if (
+                username == correct_username
+                and bcrypt.checkpw(password.encode(), correct_pw_hash.encode())
+            ):
                 st.session_state.admin_authenticated = True
                 st.success("Login berhasil!")
                 st.rerun()
             else:
                 st.error("Username atau password salah")
 
-# Halaman Form Booking
-def booking_form_page():
-    st.markdown('<div class="main-header"><h1>🏢 Booking Room Meeting 19</h1></div>', unsafe_allow_html=True)
-  
-    # Navigation buttons
+# ──────────────────────────────────────────────────────────────────────────────
+# 5. HALAMAN FORM BOOKING
+# ──────────────────────────────────────────────────────────────────────────────
+def booking_form_page() -> None:
+    st.markdown(
+        '<div class="main-header"><h1>📝 Form Booking Meeting Room</h1></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Navigasi ke daftar
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
         if st.button("📋 Lihat Daftar Booking", use_container_width=True):
             st.session_state.page = "list"
             st.rerun()
-    #with col3:
-    #    if st.button("⚙️ Admin Panel", use_container_width=True):
-    #        st.session_state.page = "admin"
-    #        st.rerun()
-    
-    st.markdown("---")
-    
-    # Form booking
-    with st.form("booking_form", clear_on_submit=True):
-        st.subheader("📝 Form Booking Meeting Room")
-        
+
+    supabase = init_supabase()
+    if not supabase:
+        st.stop()
+
+    # Form input
+    with st.form("booking_form", clear_on_submit=False):
+        nama = st.text_input("Nama Pemesan")
+        subdir = st.text_input("Sub Direktorat")
+        floor = st.selectbox("Lantai", ["19"])
+        ruang_meeting = st.selectbox("Ruang Meeting", ["Breakout Traction", "Cozy 19.2"])
+        booking_date = st.date_input("Tanggal Booking", value=date.today())
         col1, col2 = st.columns(2)
-        
         with col1:
-            nama = st.text_input("Nama *", placeholder="Masukkan Nama Lengkap")
-            subdir = st.text_input("Sub Direktorat", placeholder="Masukkan Sub Direktorat")
-            floor = st.text_input("Lantai Meeting *", placeholder="19")
-            
+            waktu_mulai = st.time_input("Waktu Mulai", value=time(9, 0))
         with col2:
-            ruang_meeting = st.selectbox("Ruang Meeting *", ["", "Breakout Traction", "Cozy 19.2"])
-            tanggal_booking = st.date_input("Tanggal Booking *", min_value=date.today())
+            waktu_selesai = st.time_input("Waktu Selesai", value=time(10, 0))
+        keterangan = st.text_area("Keterangan", height=80)
+
+        # Center the submit button using columns
+        col1, col2, col3 = st.columns([3, 2, 1])
+        with col3:
+            submit = st.form_submit_button("💾 Simpan Booking")
+
+    if submit:
+        errors = []
+
+        valid, msg = validate_name(nama)
+        if not valid:
+            st.error(msg)
+            st.stop()
+
+        valid, msg = validate_time_range(waktu_mulai, waktu_selesai)
+        if not valid:
+            st.error(msg)
+            st.stop()
+
+        valid, msg = validate_booking_conflict(
+            supabase, booking_date, waktu_mulai, waktu_selesai, ruang_meeting
+        )
+
+        if not valid:
+            st.error(msg)
+            st.stop()
+
+        if not floor or not floor.strip():
+            errors.append("Lantai Meeting harus diisi")
+
+        if not ruang_meeting:
+            errors.append("Ruang meeting harus dipilih")
+
+        if not subdir or not subdir.strip():
+            errors.append("Subdir harus diisi")
             
-            col_time1, col_time2 = st.columns(2)
-            with col_time1:
-                waktu_mulai = st.time_input("Waktu Mulai *", value=time(9, 0))
-            with col_time2:
-                waktu_selesai = st.time_input("Waktu Selesai *", value=time(10, 0))
-        
-        keterangan = st.text_area("Keterangan Meeting", placeholder="Agenda atau keterangan tambahan")
-        
-        submitted = st.form_submit_button("📅 Submit Booking", use_container_width=True)
-        
-        if submitted:
-            # Validasi input
-            errors = []
-            
-            is_valid, error = validate_name(nama)
-            if not is_valid:
-                errors.append(error)
+        if not keterangan or not keterangan.strip():
+            errors.append("Keterangan Meeting harus diisi")
+        elif len(keterangan.strip()) < 10:
+            errors.append("Keterangan Meeting minimal 10 karakter")
 
-            if not nama or not nama.strip():
-                errors.append("Nama harus diisi")
-            else:
-                is_valid, error = validate_name(nama)
-                if not is_valid:
-                    errors.append(error)
-                
-            if not floor or not floor.strip():
-                errors.append("Lantai Meeting harus diisi")
-                
-            if not ruang_meeting:
-                errors.append("Ruang meeting harus dipilih")
+        if errors:
+            for err in errors:
+                st.error(err)
+            st.stop()
 
-            if not keterangan or not keterangan.strip():
-                errors.append("Keterangan Meeting harus diisi")
-            elif len(keterangan.strip()) < 10:
-                errors.append("Keterangan Meeting minimal 10 karakter")
-                
-            is_valid, error = validate_time_range(waktu_mulai, waktu_selesai)
-            if not is_valid:
-                errors.append(error)
-            
-            if errors:
-                for error in errors:
-                    st.error(error)
-            else:
-                # Cek konflik jadwal
-                supabase = init_supabase()
-                if supabase:
-                    is_valid, error = validate_booking_conflict(supabase, tanggal_booking, waktu_mulai, waktu_selesai, ruang_meeting)
-                    if not is_valid:
-                        st.error(error)
-                    else:
-                        # Insert ke database
-                        try:
-                            data = {
-                                "nama": nama.strip(),
-                                "subdir": subdir.strip(),
-                                "floor": floor.strip(),
-                                "ruang_meeting": ruang_meeting,
-                                "tanggal_booking": str(tanggal_booking),
-                                "waktu_mulai": str(waktu_mulai),
-                                "waktu_selesai": str(waktu_selesai),
-                                "keterangan": keterangan.strip(),
-                                "created_at": datetime.now().isoformat()
-                            }
-                            
-                            result = supabase.table('bookings').insert(data).execute()
-                            st.success("✅ Booking berhasil disimpan!")
-                            st.balloons()
-                            
-                        except Exception as e:
-                            st.error(f"Error menyimpan data: {str(e)}")
-
-    st.markdown("")
-    st.markdown("")
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.markdown(''':gray[*please use light mode in browser to get better experience*]''') 
-        st.markdown(''':gray[*for adding new meeting room please contact rania traction*]''')
-
-def debug_supabase_connection():
-    """Fungsi untuk debugging koneksi Supabase"""
-    if st.button("🔍 Test Koneksi Supabase"):
         try:
-            # Cek apakah secrets tersedia
-            if "supabase" not in st.secrets:
-                st.error("❌ Secrets supabase tidak ditemukan")
-                return
-                
-            url = st.secrets["supabase"]["url"]
-            key = st.secrets["supabase"]["key"]
-            
-            # Tampilkan info tanpa mengekspos key lengkap
-            st.info(f"📍 URL: {url}")
-            st.info(f"🔑 Key: {key[:20]}...{key[-10:]}")
-            
-            # Test koneksi
-            supabase = create_client(url, key)
-            result = supabase.table('bookings').select('count').execute()
-            
-            st.success("✅ Koneksi berhasil!")
-            
-        except Exception as e:
-            st.error(f"❌ Error: {str(e)}")
+            supabase.table("bookings").insert(
+                {
+                    "nama": nama,
+                    "subdir": subdir,
+                    "floor": floor,
+                    "ruang_meeting": ruang_meeting,
+                    "tanggal_booking": str(booking_date),
+                    "waktu_mulai": waktu_mulai.strftime("%H:%M:%S"),
+                    "waktu_selesai": waktu_selesai.strftime("%H:%M:%S"),
+                    "keterangan": keterangan,
+                }
+            ).execute()
+            st.success("Booking berhasil disimpan!")
+            st.session_state.page = "list"
+            st.rerun()
+        except Exception as err:
+            st.error(f"Gagal menyimpan booking: {err}")
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 6. HALAMAN LIST BOOKING – CALENDAR VIEW
+# ──────────────────────────────────────────────────────────────────────────────
+from streamlit_calendar import calendar  # import setelah yakin ter-install
 
-# Halaman List Booking
-def booking_list_page():
-    st.markdown('<div class="main-header"><h1>📋 Daftar Booking Meeting Room</h1></div>', unsafe_allow_html=True)
-    
-    # Navigation buttons
+def booking_list_page() -> None:
+    st.markdown(
+        '<div class="main-header"><h1>📅 Kalender Booking Meeting Room</h1></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Tombol navigasi
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        if st.button("🔙 Kembali ke Form", use_container_width=True):
+        if st.button("➕ Tambah Booking", use_container_width=True):
             st.session_state.page = "form"
             st.rerun()
     #with col2:
     #    if st.button("⚙️ Admin Panel", use_container_width=True):
     #        st.session_state.page = "admin"
     #        st.rerun()
-    
+
     st.markdown("---")
-    
-    # Load data
+
     supabase = init_supabase()
-    if supabase:
-        try:
-            result = supabase.table('bookings').select('*').order('tanggal_booking', desc=False).execute()
-            
-            if result.data:
-                df = pd.DataFrame(result.data)
+    if not supabase:
+        st.stop()
 
-                # Sorting berdasarkan tanggal_booking dan waktu_mulai_dt secara ascending
-                df = df.sort_values(by=['tanggal_booking', 'waktu_mulai'], ascending=[True, True])
+    try:
+        result = (
+            supabase.table("bookings")
+            .select("*")
+            .order("tanggal_booking", desc=False)
+            .execute()
+        )
 
-                # Format data untuk display
-                df['Tanggal'] = pd.to_datetime(df['tanggal_booking']).dt.strftime('%d/%m/%Y')
-                df['Waktu'] = df['waktu_mulai'].str[:5] + ' - ' + df['waktu_selesai'].str[:5]
-                
-                display_df = df[['Tanggal', 'Waktu', 'nama', 'subdir', 'floor', 'ruang_meeting', 'keterangan']].copy()
-                display_df.columns = ['Tanggal', 'Waktu', 'Nama', 'Sub Direktorat', 'Lantai', 'Ruang', 'Keterangan']
-                
-                st.dataframe(display_df, use_container_width=True, hide_index=True)
-                
-                # Filter berdasarkan tanggal
-                st.subheader("🔍 Filter Booking")
-                filter_date = st.date_input("Pilih tanggal", value=date.today())
-                
-                filtered_df = df[df['tanggal_booking'] == str(filter_date)]
-                if not filtered_df.empty:
-                    st.write(f"**Booking untuk tanggal {filter_date.strftime('%d/%m/%Y')}:**")
-                    display_filtered = filtered_df[['Waktu', 'nama', 'subdir', 'floor', 'ruang_meeting', 'keterangan']].copy()
-                    display_filtered.columns = ['Waktu', 'Nama', 'Sub Direktorat', 'Lantai', 'Ruang', 'Keterangan']
-                    st.dataframe(display_filtered, use_container_width=True, hide_index=True)
-                else:
-                    st.info("Tidak ada booking pada tanggal tersebut")
-                    
-            else:
-                st.info("Belum ada data booking")
-                
-        except Exception as e:
-            st.error(f"Error loading data: {str(e)}")
+        if not result.data:
+            st.info("Belum ada data booking")
+            return
 
-    st.markdown("")
-    st.markdown("")
-    st.markdown("")
-    
-    # ----- TOMBOL ADMIN DI BAWAH FORM -----
-    #col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns(10)
-    #with col10:
-    #    if st.button("adminpanel", key="admin_panel_bottom",use_container_width=True, type="tertiary"):
-    #        st.session_state.page = "admin"
-    #        st.rerun()
-                     
-# Halaman Admin
-def admin_page():
-    st.markdown('<div class="main-header"><h1>⚙️ Admin Panel</h1></div>', unsafe_allow_html=True)
-    
-    if not check_admin_auth():
-        admin_login()
+        df = pd.DataFrame(result.data)
+
+        # ── Konversi ke event kalender ──────────────────────────────────────
+        events = []
+        for _, row in df.iterrows():
+            start_dt = f"{row['tanggal_booking']}T{row['waktu_mulai']}"
+            end_dt = f"{row['tanggal_booking']}T{row['waktu_selesai']}"
+            color = "#FF6B6B" if row["ruang_meeting"] == "Breakout Traction" else "#4ECDC4"
+            events.append(
+                {
+                    "id": row["id"],
+                    "title": f"{row['nama']} - {row['ruang_meeting']}",
+                    "start": start_dt,
+                    "end": end_dt,
+                    "color": color,
+                    "extendedProps": {
+                        "nama": row["nama"],
+                        "subdir": row["subdir"],
+                        "floor": row["floor"],
+                        "ruang_meeting": row["ruang_meeting"],
+                        "keterangan": row["keterangan"],
+                    },
+                }
+            )
+
+        # Filter ruang meeting (opsional)
+        ruang_opsi = ["Semua Ruang", "Breakout Traction", "Cozy 19.2"]
+        room_filter = st.selectbox("Filter Ruang Meeting", ruang_opsi)
+        if room_filter != "Semua Ruang":
+            events = [e for e in events if e["extendedProps"]["ruang_meeting"] == room_filter]
+
+        # Opsi & rendering kalender
+        cal_options = {
+            "editable": False,
+            "selectable": True,
+            "headerToolbar": {
+                "left": "prev,next today",
+                "center": "title",
+                "right": "dayGridMonth,timeGridWeek,timeGridDay",
+            },
+            "initialView": "dayGridMonth",
+            "height": "auto",
+            "slotMinTime": "08:00:00",
+            "slotMaxTime": "18:00:00",
+            "weekends": True,
+            "locale": "id",
+            "eventDisplay": "block",
+            "dayMaxEvents": 3,
+            "moreLinkText": "lainnya",
+        }
+
+        if "calendar_key" not in st.session_state:
+            st.session_state.calendar_key = str(uuid.uuid4())
+
+        cal_state = calendar(
+            events=events,
+            options=cal_options,
+            key=st.session_state.calendar_key,
+        )
+
+        # ── Tampilkan detail saat event diklik ──────────────────────────────
+        if cal_state.get("eventClick"):
+            ev = cal_state["eventClick"]["event"]
+            st.subheader("📋 Detail Booking")
+            c1, c2 = st.columns(2)
+            with c1:
+                st.write(f"**Nama:** {ev['extendedProps']['nama']}")
+                st.write(f"**Sub Direktorat:** {ev['extendedProps']['subdir']}")
+                st.write(f"**Lantai:** {ev['extendedProps']['floor']}")
+            with c2:
+                st.write(f"**Ruang Meeting:** {ev['extendedProps']['ruang_meeting']}")
+                st.write(f"**Tanggal:** {ev['start'][:10]}")
+                st.write(
+                    f"**Waktu:** {ev['start'][11:16]} - {ev['end'][11:16]}"
+                )
+            if ev["extendedProps"]["keterangan"]:
+                st.write(f"**Keterangan:** {ev['extendedProps']['keterangan']}")
+
+        # ── Legend warna ────────────────────────────────────────────────────
+        st.markdown("---")
+        st.subheader("📌 Keterangan Warna")
+        colA, colB = st.columns(2)
+        with colA:
+            st.markdown("🔴 **Breakout Traction**")
+        with colB:
+            st.markdown("🟢 **Cozy 19.2**")
+
+    except Exception as err:
+        st.error(f"Error memuat data: {err}")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 7. ADMIN PANEL (contoh sederhana)
+# ──────────────────────────────────────────────────────────────────────────────
+def admin_page() -> None:
+    if not admin_authenticated():
+        admin_login_page()
         return
-    
-    # Navigation buttons
-    col1, col2, col3 = st.columns(3)
+
+    st.markdown(
+        '<div class="main-header"><h1>⚙️ Admin Panel – Booking Meeting Room</h1></div>',
+        unsafe_allow_html=True,
+    )
+
+    col1, col2, _ = st.columns([1, 1, 8])
     with col1:
-        if st.button("🔙 Kembali ke Form", use_container_width=True):
-            st.session_state.page = "form"
-            st.rerun()
-    with col2:
-        if st.button("📋 Lihat Daftar", use_container_width=True):
+        if st.button("📋 Daftar Booking", use_container_width=True):
             st.session_state.page = "list"
             st.rerun()
-    with col3:
-        if st.button("🚪 Logout", use_container_width=True):
-            st.session_state.admin_authenticated = False
+    with col2:
+        if st.button("➕ Form Booking", use_container_width=True):
+            st.session_state.page = "form"
             st.rerun()
-    
+
     st.markdown("---")
-    
-    # Load dan edit data
+
     supabase = init_supabase()
-    if supabase:
-        try:
-            result = supabase.table('bookings').select('*').order('tanggal_booking', desc=False).execute()
-            
-            if result.data:
-                df = pd.DataFrame(result.data)
-                df.drop(columns=["floor"], inplace=True, errors="ignore")
-              
-                # PERBAIKAN: Konversi tipe data yang benar
-                try:
-                    df['tanggal_booking'] = pd.to_datetime(df['tanggal_booking'], errors='coerce').dt.date
-                    df['waktu_mulai'] = pd.to_datetime(df['waktu_mulai'], format='%H:%M:%S', errors='coerce').dt.time
-                    df['waktu_selesai'] = pd.to_datetime(df['waktu_selesai'], format='%H:%M:%S', errors='coerce').dt.time
-                    if 'created_at' in df.columns:
-                        df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
-                except Exception as e:
-                    st.error(f"Error konversi data: {str(e)}")
-                    return
-                
-                st.subheader("✏️ Edit & Hapus Booking")
-                
-                # Data editor dengan konfigurasi yang tepat
-                edited_df = st.data_editor(
-                    df,
-                    column_config={
-                        "id": st.column_config.NumberColumn("ID", disabled=True),
-                        "nama": st.column_config.TextColumn("Nama", required=True),
-                        "subdir": st.column_config.TextColumn("Sub Direktorat"),
-                        "floor": st.column_config.TextColumn("No. HP", required=True),
-                        "ruang_meeting": st.column_config.SelectboxColumn(
-                            "Ruang Meeting",
-                            options=["Breakout Traction", "Cozy 19.2"],
-                            required=True
-                        ),
-                        "tanggal_booking": st.column_config.DateColumn(
-                            "Tanggal Booking", 
-                            required=True,
-                            format="DD/MM/YYYY"
-                        ),
-                        "waktu_mulai": st.column_config.TimeColumn("Waktu Mulai", required=True),
-                        "waktu_selesai": st.column_config.TimeColumn("Waktu Selesai", required=True),
-                        "keterangan": st.column_config.TextColumn("Keterangan"),
-                        "created_at": st.column_config.DatetimeColumn("Dibuat", disabled=True)
-                    },
-                    num_rows="dynamic",
-                    use_container_width=True,
-                    key="booking_editor"
-                )
-                
-                # Tombol untuk menyimpan perubahan
-                if st.button("💾 Simpan Perubahan", type="primary"):
-                    try:
-                        if "booking_editor" in st.session_state:
-                            editor_state = st.session_state["booking_editor"]
-                            
-                            # Handle edited rows
-                            if "edited_rows" in editor_state:
-                                for idx, changes in editor_state["edited_rows"].items():
-                                    row_id = df.iloc[idx]["id"]
-                                    
-                                    # Konversi perubahan ke format database
-                                    db_changes = {}
-                                    for key, value in changes.items():
-                                        if key == 'tanggal_booking' and hasattr(value, 'strftime'):
-                                            db_changes[key] = value.strftime('%Y-%m-%d')
-                                        elif key in ['waktu_mulai', 'waktu_selesai'] and hasattr(value, 'strftime'):
-                                            db_changes[key] = value.strftime('%H:%M:%S')
-                                        else:
-                                            db_changes[key] = value
-                                    
-                                    supabase.table('bookings').update(db_changes).eq('id', row_id).execute()
-                            
-                            # Handle deleted rows
-                            if "deleted_rows" in editor_state:
-                                for idx in editor_state["deleted_rows"]:
-                                    row_id = df.iloc[idx]["id"]
-                                    supabase.table('bookings').delete().eq('id', row_id).execute()
-                            
-                            # Handle added rows
-                            if "added_rows" in editor_state:
-                                for row in editor_state["added_rows"]:
-                                    row_data = dict(row)
-                                    
-                                    # Konversi data baru ke format database
-                                    if 'tanggal_booking' in row_data and hasattr(row_data['tanggal_booking'], 'strftime'):
-                                        row_data['tanggal_booking'] = row_data['tanggal_booking'].strftime('%Y-%m-%d')
-                                    if 'waktu_mulai' in row_data and hasattr(row_data['waktu_mulai'], 'strftime'):
-                                        row_data['waktu_mulai'] = row_data['waktu_mulai'].strftime('%H:%M:%S')
-                                    if 'waktu_selesai' in row_data and hasattr(row_data['waktu_selesai'], 'strftime'):
-                                        row_data['waktu_selesai'] = row_data['waktu_selesai'].strftime('%H:%M:%S')
-                                    
-                                    row_data["created_at"] = datetime.now().isoformat()
-                                    supabase.table('bookings').insert(row_data).execute()
-                        
-                        st.success("✅ Perubahan berhasil disimpan!")
-                        st.rerun()
-                        
-                    except Exception as e:
-                        st.error(f"Error menyimpan perubahan: {str(e)}")
-                        
-            else:
-                st.info("Belum ada data booking")
-                
-        except Exception as e:
-            st.error(f"Error loading data: {str(e)}")
+    if not supabase:
+        st.stop()
 
+    try:
+        df = pd.DataFrame(
+            supabase.table("bookings").select("*").execute().data
+        )
+        if df.empty:
+            st.info("Belum ada data booking")
+            return
 
-# Main app
-def main():
-    load_css()
-    
-    # Initialize session state
-    if 'page' not in st.session_state:
+        # Tampilkan tabel edit/delete sederhana
+        st.dataframe(
+            df[
+                [
+                    "id",
+                    "nama",
+                    "ruang_meeting",
+                    "tanggal_booking",
+                    "waktu_mulai",
+                    "waktu_selesai",
+                ]
+            ],
+            hide_index=True,
+        )
+
+        # Hapus booking
+        del_id = st.number_input(
+            "Masukkan ID untuk dihapus",
+            step=1,
+            min_value=1,
+            format="%d",
+        )
+        if st.button("🗑️ Hapus Booking"):
+            supabase.table("bookings").delete().eq("id", del_id).execute()
+            st.success("Booking dihapus")
+            st.rerun()
+    except Exception as err:
+        st.error(f"Gagal memuat data: {err}")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 8. ROUTING APLIKASI
+# ──────────────────────────────────────────────────────────────────────────────
+def main() -> None:
+    if "page" not in st.session_state:
         st.session_state.page = "form"
-    
-    # Route to pages
+
     if st.session_state.page == "form":
         booking_form_page()
     elif st.session_state.page == "list":
@@ -612,5 +480,6 @@ def main():
     elif st.session_state.page == "admin":
         admin_page()
 
+# Jalankan aplikasi
 if __name__ == "__main__":
     main()
