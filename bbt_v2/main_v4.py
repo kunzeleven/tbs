@@ -395,9 +395,7 @@ def booking_form_page() -> None:
         st.markdown("**📌 Catatan:** Field yang bertanda <span class='required-field'>*</span> wajib diisi", unsafe_allow_html=True)
         
         # Submit button
-        col1, col2, col3 = st.columns(3)
-        with col2:
-            submit = st.form_submit_button("💾 Simpan Booking", use_container_width=True)
+        submit = st.form_submit_button("💾 Simpan Booking", use_container_width=True)
 
     # Validasi yang diperluas
     if submit:
