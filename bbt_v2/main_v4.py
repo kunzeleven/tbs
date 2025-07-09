@@ -408,13 +408,15 @@ def booking_list_page() -> None:
                 st.write(f"**Keterangan:** {ev['extendedProps']['keterangan']}")
 
         # ── Legend warna ────────────────────────────────────────────────────
-        st.markdown("---")
         st.subheader("📌 Keterangan Warna")
-        colA, colB = st.columns(2)
-        with colA:
-            st.markdown("🔴 **Breakout Traction**")
-        with colB:
-            st.markdown("🟢 **Cozy 19.2**")
+        #colA, colB = st.columns(2)
+        #with colA:
+        #    st.markdown("🔴 **Breakout Traction**")
+        #with colB:
+        #    st.markdown("🟢 **Cozy 19.2**")
+
+        st.markdown("🔴 **Breakout Traction**")
+        st.markdown("🟢 **Cozy 19.2**")
 
     except Exception as err:
         st.error(f"Error memuat data: {err}")
